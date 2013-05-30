@@ -1,0 +1,79 @@
+package automate;
+
+public class Solution {
+
+	private Valeur var;	// valeurs des variables
+	private double[] eval;	// evaluation de la solution
+
+	public Solution(Valeur var, ResEquation resultat, int[][] facteurs){
+		this.var = var;
+		calculerEval(facteurs, resultat);
+	}
+
+	public Solution(Valeur var, double[] eval){
+		this.var = var;
+		this.eval = eval;
+	}
+
+	public void calculerEval(int[][] facteurs, ResEquation resultat){
+		double[] eqBase = new double[resultat.size()];
+		for (int k = 0; k < eqBase.length; k++)
+			eqBase[k] = 0;
+		for (int i =0; i<facteurs.length; i++){
+			for (int j=0; j<facteurs[i].length; j++){
+				//System.out.println("eqBase avant : " + eqBase[i]);
+				eqBase[i] += (facteurs[i][j]*Integer.valueOf(var.getTab(j)));
+				//System.out.println(facteurs[i][j]+ " * " + Integer.valueOf(var.getTab(j)));
+			}
+			//System.out.println("res-base/2 : " + resultat[i] + "-" + eqBase[i] + "/2");
+			eqBase[i] = (resultat.getRes(i)- eqBase[i])/2;		// ex : (res- x+2y-3z)/2 
+		}
+		this.eval = eqBase;
+		//System.out.println("eval solution: " + res);
+
+	}
+
+	/*public double calculerEval(String[] chemin, int[] facteurs, int resultat){
+		double eqBase = 0;
+		int[] varDec = bin2dec(chemin);
+		for (int i =0; i<facteurs.length; i++)
+			eqBase += facteurs[i]*varDec[i];
+			double res = (resultat- eqBase)/2;		// ex : (res- x+2y-3z)/2 
+			//System.out.println("eqBase avec transition: " + eqBase + " resultat : " + eval);
+			//System.out.println("eval avec transition: " + res);
+			return res;
+	}*/
+
+	public Solution clonee(){		// pour pouvoir mettre dans la liste des solutions
+		Solution s2 = new Solution(getVar().clonee(), getEval());
+		return s2;
+	}
+
+	public String[] cloneVar(){
+		String[] tab = new String[var.size()];
+		for (int i = 0; i<var.size(); i++)
+			tab[i] = var.getTab(i);
+		return tab;
+	}
+
+
+	public Valeur getVar(){
+		return this.var;
+	}
+
+	public double[] getEval(){
+		return this.eval;		
+	}	
+
+	public String toString(){
+		return var.toString();
+	}
+
+	public String evalString(){
+		String res = "solution : ";
+		res += toString();
+		res+= " avec l'évaluation : " + eval;
+		return res;	
+	}
+
+}
