@@ -2,17 +2,19 @@ package automate;
 import java.util.ArrayList;
 
 import outils.Print;
+import outils.TabInt;
+import outils.TabString;
 
 
 public abstract class Equation {
 
-	protected ResEquation resultat;
+	protected TabInt resultat;
 	protected int[][] facteurs;
 	protected ArrayList<Solution> listSolutions;
 	protected int numeroEq;
 	
 
-	public ResEquation getRes(){
+	public TabInt getRes(){
 		return this.resultat;
 	}	
 
@@ -32,13 +34,13 @@ public abstract class Equation {
 		return this.listSolutions;
 	}
 		//facteurs de la solution n° indice
-	public Valeur getSolution(int indice){
+	public TabString getSolution(int indice){
 		return  listSolutions.get(indice).getVar();
 	}
 		//résultat du voisin n° indice
-	public ResEquation getVoisin(int indice){
+	public TabInt getVoisin(int indice){
 		double[] resVoisin = listSolutions.get(indice).getEval();
-		ResEquation res = new ResEquation(resVoisin.length);
+		TabInt res = new TabInt(resVoisin.length);
 		for (int i=0; i<resVoisin.length; i++)
 			res.setRes(i, (int) resVoisin[i]);
 		return res;
@@ -80,9 +82,7 @@ public abstract class Equation {
 	}
 	
 	public String toString(){
-		String str = "resultat : " + this.resultat + "\n";/*facteur :" ;
-		for (int i = 0; i<facteurs.length; i++)
-			str += " " + Print.intTab(this.facteurs[i])+ "\n";*/
+		String str = this.resultat.toString();
 		return str;
 	}
 }

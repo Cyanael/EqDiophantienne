@@ -2,35 +2,38 @@ package automate;
 
 import java.util.ArrayList;
 
+import outils.TabInt;
+import outils.TabString;
+
 public class Tree {
 
-	private ArrayList<Valeur> listCourante;
+	private ArrayList<TabString> listCourante;
 	private Tree gauche;	// liste paire
 	private Tree droit;		// liste impaire
 	private int etage;
 
 	public Tree (){
-		this.listCourante = new ArrayList<Valeur>();
+		this.listCourante = new ArrayList<TabString>();
 		this.gauche = null;
 		this.droit = null;
 		this.etage = 0;
 	}
 
-	public Tree (ArrayList<Valeur> list, int etage){
+	public Tree (ArrayList<TabString> list, int etage){
 		this.listCourante = list;
 		this.gauche = null;
 		this.droit = null;
 		this.etage = etage;
 	}
 
-	public void nouvelEtage(ArrayList<Valeur> pair, ArrayList<Valeur> impair){
+	public void nouvelEtage(ArrayList<TabString> pair, ArrayList<TabString> impair){
 		Tree gauche = new Tree(pair, getEtage()+1);
 		Tree droit = new Tree(impair, getEtage()+1);
 		this.setGauche(gauche);
 		this.setDroit(droit);
 	}
 
-	public Tree initialisation(ArrayList<Valeur>[] pair, ArrayList<Valeur>[] impair){
+	public Tree initialisation(ArrayList<TabString>[] pair, ArrayList<TabString>[] impair){
 		int nbEq = pair.length;
 		Tree racine = new Tree();
 		racine.nouvelEtage(pair[0], impair[0]); // création racine.gauche et racine.droit
@@ -43,9 +46,9 @@ public class Tree {
 			Tree feuille;
 			//System.out.println("file : " + file);
 			feuille = file.get(0); // position courante
-			ArrayList<Valeur> feuillePair = new ArrayList<Valeur>();
-			ArrayList<Valeur> feuilleImpair = new ArrayList<Valeur>();
-			ArrayList<Valeur> listFeuille = feuille.getList();
+			ArrayList<TabString> feuillePair = new ArrayList<TabString>();
+			ArrayList<TabString> feuilleImpair = new ArrayList<TabString>();
+			ArrayList<TabString> listFeuille = feuille.getList();
 			int etage = feuille.getEtage();
 			for (int k=0; k<listFeuille.size(); k++){
 				//System.out.println("valeur en cours : " + listFeuille.get(k));
@@ -72,7 +75,7 @@ public class Tree {
 
 
 
-	public ArrayList<Valeur> recherche(ResEquation indice){	//recherche de la bonne liste en fonction des résultats des équations
+	public ArrayList<TabString> recherche(TabInt indice){	//recherche de la bonne liste en fonction des résultats des équations
 		Tree courant;
 		//System.out.println("recherche arbre, indice : " + indice);
 		if (indice.getRes(0)%2 == 0)
@@ -105,7 +108,7 @@ public class Tree {
 		this.droit = droit;
 	}
 
-	public ArrayList<Valeur> getList(){
+	public ArrayList<TabString> getList(){
 		return this.listCourante;
 	}
 

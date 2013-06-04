@@ -1,10 +1,10 @@
 package matriceEtArbre;
 
-import automate.Valeur;
+import outils.TabString;
 
 public class AbFeuille extends AbExpr{
 
-	public AbFeuille(Valeur val) {
+	public AbFeuille(TabString val) {
 		super(null, null, val, "(" + val.toString2() + ")");
 	}
 

@@ -1,6 +1,9 @@
 package automate;
 import java.util.ArrayList;
 
+import outils.TabInt;
+import outils.TabString;
+
 
 public class Automate {
 
@@ -41,7 +44,7 @@ public class Automate {
 		//System.out.println("listeSol : " + eq.getSolutions());
 		for (int i=0; i<listSol.size(); i++){	// pour tous les voisins de eq
 			double[] r = listSol.get(i).getEval();
-			ResEquation res = new ResEquation(facteurs.length);
+			TabInt res = new TabInt(facteurs.length);
 			for (int j=0; j<res.size(); j++)
 			res.setRes(j, (int) r[j]);
 			//System.out.println("etat voisin : " + res);
@@ -67,7 +70,7 @@ public class Automate {
 		return indice1;
 	}
 
-	public boolean etatPresent(ResEquation resultat){   // on regarde si l'etat-equation a déjà été crée
+	public boolean etatPresent(TabInt resultat){   // on regarde si l'etat-equation a déjà été crée
 		if (listEtats.size() == 0)	// si la liste est vide
 			return false;
 		if (init.getRes().equal(resultat)) 
@@ -88,10 +91,10 @@ public class Automate {
 		ArrayList<Chemin> file = new ArrayList<Chemin>();
 
 		for (int i=0; i<init.getSolutions().size(); i++){	// premiers elements dans la file : chemins partants de init
-			ResEquation etat = new ResEquation(init.getVoisin(i));
+			TabInt etat = new TabInt(init.getVoisin(i));
 			//System.out.println("etat courant : " + etat + " numero " + getEtatNb(etat) + "\n");
 			if (!etat.equal(init.getRes())){		// les boucles allant de init à init sont évitées
-				Valeur transition = new Valeur(init.getSolution(i));
+				TabString transition = new TabString(init.getSolution(i));
 				Chemin c = new Chemin(transition, getEtatNb(etat));
 				if (getEtatNb(etat).getRes() == finale.getRes()){
 					if (!c.estNull())	// on ne veut pas les boucles nulles
@@ -101,20 +104,18 @@ public class Automate {
 					file.add(c);		// ajout des chemin init => !finale
 			}
 		}
-		System.out.println("fin init, solMin : " + solMin);
-		System.out.println("fin init, file : " + file);
 		
-		while(file.size()!=0 && file.get(0).getTransition().size() <listEtats.size()){	
+		while(file.size()!=0 && file.get(0).getTailleChemin() <listEtats.size()){	
 			Chemin courant = file.get(0); 	// pour chaque element de la file : courant
-			System.out.println("courant : " + courant + " nbSol : " + courant.getEtat().getSolutions().size());
+			//System.out.println("courant : " + courant + " nbSol : " + courant.getEtat().getSolutions().size());
 			
 			for (int i=0; i<courant.getEtat().getSolutions().size(); i++){	// on cree un chemin partant de l'etat courant 
-				ResEquation etat = new ResEquation(courant.getEtat().getVoisin(i));		// etat : voisin de courant
-				System.out.println(etat + " estPresent " + courant.getListEtat() +" : ");
-				System.out.println(courant.etatPresentListe(etat));
+				TabInt etat = new TabInt(courant.getEtat().getVoisin(i));		// etat : voisin de courant
+				//System.out.println(etat + " estPresent " + courant.getListEtat() +" : ");
+				//System.out.println(courant.etatPresentListe(etat));
 				if (etat != init.getRes() && !courant.etatPresentListe(etat)){	// pour éviter les boucles
-					System.out.println("pas present");
-					Valeur transition = new Valeur(courant.getEtat().getSolution(i));	
+					//System.out.println("pas present");
+					TabString transition = new TabString(courant.getEtat().getSolution(i));	
 					Chemin c = courant.ajoutTransition(transition, getEtatNb(etat));
 					if (solMin.size() == 0 && c.getEtat() == finale)
 						solMin.add(c);
@@ -154,8 +155,8 @@ public class Automate {
 		ArrayList<Chemin> file = new ArrayList<Chemin>();
 
 		for (int i=0; i<finale.getSolutions().size(); i++){	// premiers elements dans la file : chemins partants de finale
-			ResEquation etat = new ResEquation(finale.getVoisin(i));
-			Valeur transition = new Valeur(finale.getSolution(i));
+			TabInt etat = new TabInt(finale.getVoisin(i));
+			TabString transition = new TabString(finale.getSolution(i));
 			Chemin c = new Chemin(transition, getEtatNb(etat));
 			if (getEtatNb(etat).getRes() == finale.getRes()) {
 				if (!c.estNull())
@@ -164,16 +165,14 @@ public class Automate {
 			else
 				file.add(c);		// ajout des chemin finale => !finale
 		}
-		System.out.println("init file : " + file);
-		System.out.println("init solMin : " + solMin);
-
-		while(file.size()!=0 && file.get(0).getTransition().size() <listEtats.size()){	
+		
+		while(file.size()!=0 && file.get(0).getTailleChemin() <listEtats.size()){	
 			Chemin courant = file.get(0); 	// pour chaque element de la file
 
 			for (int i=0; i<courant.getEtat().getSolutions().size(); i++){// on cree un chemin partant de l'etat courant 
-				ResEquation etat = new ResEquation(courant.getEtat().getVoisin(i));
+				TabInt etat = new TabInt(courant.getEtat().getVoisin(i));
 				if (!courant.etatPresentListe(etat)){	// pour éviter les boucles
-					Valeur transition = new Valeur(courant.getEtat().getSolution(i));
+					TabString transition = new TabString(courant.getEtat().getSolution(i));
 					Chemin c = courant.ajoutTransition(transition, getEtatNb(etat));
 					if (solMin.size() == 0 && c.getEtat() == finale)
 						solMin.add(c);
@@ -239,7 +238,7 @@ public class Automate {
 		return this.listEtats.get(indice);
 	}
 		// equation dont le resultat est indice
-	public Equation getEtatNb(ResEquation indice){	//TODO : enlever Syso
+	public Equation getEtatNb(TabInt indice){	//TODO : enlever Syso
 		//System.out.println("entre getEtatNb, indice : " + indice);
 		//System.out.println("listEtat : " + listEtats);
 		Equation eq = null;
@@ -247,7 +246,7 @@ public class Automate {
 		int i = 0;
 		while((trouve == false) && i<listEtats.size()){
 			trouve = true;
-			ResEquation courante = new ResEquation(listEtats.get(i).getRes());
+			TabInt courante = new TabInt(listEtats.get(i).getRes());
 			//System.out.println("comparaison : " + indice + " et " + courante);
 			for (int j=0; j<indice.size(); j++){
 				if (courante.getRes(j) != indice.getRes(j)){
@@ -270,4 +269,8 @@ public class Automate {
 		return listEtats.size();
 	}
 
+	public Tree getArbre(){
+		return this.arbreListes;
+	}
+	
 }

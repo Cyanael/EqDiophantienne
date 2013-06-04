@@ -31,8 +31,8 @@ public class Print {
 	}
 	
 	public static String automate(Automate auto){
-		String res = "";
-		res += "etat intial : " + auto.getInit() + "\n états : ";
+		String res = "nombre d'états : " + auto.getListEtats().size() + "\n";
+		res += "etat intial : " + auto.getInit() + "\netat final : " + auto.getFinale()+ "\nétats : ";
 		res += listEquations(auto.getListEtats());
 		return res;
 	}
@@ -74,7 +74,8 @@ public class Print {
 		String res = "";
 		for (int i=0; i<ar.size(); i++)
 			//res += "(" + Print.intTab(ar.get(i).getTransitionInt()) + ") ";
-			res += "(" + ar.get(i).getTransition() + ") "/*: " + ar.get(i).getEtat() + " etats presents : " + ar.get(i).getListEtat() +"\n"*/;
+			
+			res += "(" + ar.get(i) + ") "/*: " + ar.get(i).getEtat() + " etats presents : " + ar.get(i).getListEtat() +"\n"*/;
 		return res;
 	}
 	

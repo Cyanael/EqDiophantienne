@@ -1,13 +1,16 @@
 package automate;
 import java.util.ArrayList;
 
+import outils.TabInt;
+import outils.TabString;
+
 
 public class EqInit extends Equation{
 
-	private ArrayList<Valeur>[] listTransitionsPaires;
-	private ArrayList<Valeur>[] listTransitionsImpaires;
+	private ArrayList<TabString>[] listTransitionsPaires;
+	private ArrayList<TabString>[] listTransitionsImpaires;
 
-	public EqInit(ResEquation res, int[][] facteurs){
+	public EqInit(TabInt res, int[][] facteurs){
 		this.resultat = res;
 		this.facteurs = facteurs;
 		this.numeroEq = 0;
@@ -17,19 +20,19 @@ public class EqInit extends Equation{
 		int nbVar = facteurs[0].length;
 		int nbEq = this.resultat.size();
 		ArrayList<Solution> listSol = new ArrayList<Solution>();
-		ArrayList<Valeur>[] transitionsPaires = new ArrayList[nbEq];
-		ArrayList<Valeur>[] transitionsImpaires = new ArrayList[nbEq];
+		ArrayList<TabString>[] transitionsPaires = new ArrayList[nbEq];
+		ArrayList<TabString>[] transitionsImpaires = new ArrayList[nbEq];
 		for (int l=0; l<nbEq; l++){
-			transitionsPaires[l] = new ArrayList<Valeur>();
-			transitionsImpaires[l] = new ArrayList<Valeur>();
+			transitionsPaires[l] = new ArrayList<TabString>();
+			transitionsImpaires[l] = new ArrayList<TabString>();
 		}
-		Valeur solution = new Valeur(nbVar);
+		TabString solution = new TabString(nbVar);
 		for (int i =0; i<nbVar; i++)
 			solution.setTab(i,  "0");
 
 		Solution s = new Solution(solution, this.resultat, this.facteurs);
 		double[] res = s.getEval();
-		Valeur trans = new Valeur(nbVar);
+		TabString trans = new TabString(nbVar);
 		for (int i = 0; i<nbVar; i++)
 			trans.setTab(i, solution.getTab(i));
 		for (int k=0; k<nbEq; k++){
@@ -60,7 +63,7 @@ public class EqInit extends Equation{
 				Solution s1 = new Solution(solution, this.resultat, this.facteurs);
 				res = s1.getEval();
 				//System.out.println("solution  : " + solution);
-				Valeur trans1 = new Valeur(nbVar);
+				TabString trans1 = new TabString(nbVar);
 				for (int i=0; i<nbVar; i++)
 					trans1.setTab(i, solution.getTab(i));
 
@@ -98,19 +101,19 @@ public class EqInit extends Equation{
 
 
 	
-	public ArrayList<Valeur>[] getTransitionsPaires(){
+	public ArrayList<TabString>[] getTransitionsPaires(){
 		return this.listTransitionsPaires;
 	}
 
-	public ArrayList<Valeur>[] getTransitionsImpaires(){
+	public ArrayList<TabString>[] getTransitionsImpaires(){
 		return this.listTransitionsImpaires;
 	}
 
-	public ArrayList<Valeur> getTransitionsPaires(int indice){
+	public ArrayList<TabString> getTransitionsPaires(int indice){
 		return this.listTransitionsPaires[indice];
 	}
 
-	public ArrayList<Valeur> getTransitionsImpaires(int indice){
+	public ArrayList<TabString> getTransitionsImpaires(int indice){
 		return this.listTransitionsImpaires[indice];
 	}
 }

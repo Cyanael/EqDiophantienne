@@ -1,9 +1,9 @@
 package matriceEtArbre;
 import outils.Print;
+import outils.TabInt;
+import outils.TabString;
 import automate.Automate;
 import automate.Equation;
-import automate.ResEquation;
-import automate.Valeur;
 
 
 public class MatriceCalcul {
@@ -31,7 +31,7 @@ public class MatriceCalcul {
 			//System.out.println("eq courante : " + eq);
 			for (int j=0; j<eq.nbVoisins(); j++){
 				int a = eq.numeroEq();		// ligne de la matrice : etat courant
-				ResEquation b = new ResEquation(eq.getVoisin(j));	// resultat du voisin
+				TabInt b = new TabInt(eq.getVoisin(j));	// resultat du voisin
 				//System.out.println("voisin : " + b);
 				int c = 0;						// numero du voisin (colonne)
 				for (int k = 0; k<auto.getListEtats().size(); k++){

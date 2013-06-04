@@ -1,21 +1,24 @@
 package automate;
 
+import outils.TabInt;
+import outils.TabString;
+
 public class Solution {
 
-	private Valeur var;	// valeurs des variables
+	private TabString var;	// valeurs des variables
 	private double[] eval;	// evaluation de la solution
 
-	public Solution(Valeur var, ResEquation resultat, int[][] facteurs){
+	public Solution(TabString var, TabInt resultat, int[][] facteurs){
 		this.var = var;
 		calculerEval(facteurs, resultat);
 	}
 
-	public Solution(Valeur var, double[] eval){
+	public Solution(TabString var, double[] eval){
 		this.var = var;
 		this.eval = eval;
 	}
 
-	public void calculerEval(int[][] facteurs, ResEquation resultat){
+	public void calculerEval(int[][] facteurs, TabInt resultat){
 		double[] eqBase = new double[resultat.size()];
 		for (int k = 0; k < eqBase.length; k++)
 			eqBase[k] = 0;
@@ -57,7 +60,7 @@ public class Solution {
 	}
 
 
-	public Valeur getVar(){
+	public TabString getVar(){
 		return this.var;
 	}
 

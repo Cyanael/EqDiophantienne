@@ -1,17 +1,17 @@
 package matriceEtArbre;
 
-import automate.Valeur;
+import outils.TabString;
 
 
 public class AbExpr {
 
 	protected AbExpr gauche;
 	protected AbExpr droit;
-	protected Valeur val;		// Valeur lorsque l'arbre est une feuille
-	protected String str;	// écriture de l'arbre en string
+	protected TabString val;		// Valeur lorsque l'arbre est une feuille
+	protected String str;		// écriture de l'arbre en string
 
 
-	public AbExpr (AbExpr g, AbExpr d, Valeur val, String str){
+	public AbExpr (AbExpr g, AbExpr d, TabString val, String str){
 		this.gauche = g;
 		this.droit = d;
 		this.str = str;
@@ -34,11 +34,11 @@ public class AbExpr {
 		this.droit = droit;
 	}
 
-	public Valeur getVal(){
+	public TabString getVal(){
 		return this.val;
 	}
 
-	public void setVal(Valeur str){
+	public void setVal(TabString str){
 		this.val = str;
 	}
 
