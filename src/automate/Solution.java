@@ -36,16 +36,6 @@ public class Solution {
 
 	}
 
-	/*public double calculerEval(String[] chemin, int[] facteurs, int resultat){
-		double eqBase = 0;
-		int[] varDec = bin2dec(chemin);
-		for (int i =0; i<facteurs.length; i++)
-			eqBase += facteurs[i]*varDec[i];
-			double res = (resultat- eqBase)/2;		// ex : (res- x+2y-3z)/2 
-			//System.out.println("eqBase avec transition: " + eqBase + " resultat : " + eval);
-			//System.out.println("eval avec transition: " + res);
-			return res;
-	}*/
 
 	public Solution clonee(){		// pour pouvoir mettre dans la liste des solutions
 		Solution s2 = new Solution(getVar().clonee(), getEval());

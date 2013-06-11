@@ -96,7 +96,7 @@ public class EqInit extends Equation{
 		this.listSolutions = listSol;
 		this.listTransitionsPaires = transitionsPaires;
 		this.listTransitionsImpaires = transitionsImpaires;		
-		System.out.println("init eQinit : " + listSol);
+		System.out.println("init, liste des transitions possibles : " + listSol);
 	}
 
 

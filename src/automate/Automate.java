@@ -17,7 +17,10 @@ public class Automate {
 	public Automate(int[][] facteurs, EqInit a){
 		this.facteurs = facteurs;
 		this.init = a;
-		this.finale = null;
+		if (a.getRes().estNull())
+			this.finale = a;
+		else
+			this.finale = null;
 		this.listEtats = new ArrayList<Equation>();
 		this.arbreListes = new Tree();
 		arbreListes = arbreListes.initialisation(a.getTransitionsPaires(), a.getTransitionsImpaires());	
@@ -35,6 +38,11 @@ public class Automate {
 			indice++;
 		}
 		//System.out.println("liste des etats : " + listEtats);
+		if (finale == null){
+			System.out.println("Aucun état final n'a été trouvé");
+			System.exit(0);
+		}
+		
 	}
 
 	public int creation(Equation eq, int indice){
@@ -93,7 +101,7 @@ public class Automate {
 		for (int i=0; i<init.getSolutions().size(); i++){	// premiers elements dans la file : chemins partants de init
 			TabInt etat = new TabInt(init.getVoisin(i));
 			//System.out.println("etat courant : " + etat + " numero " + getEtatNb(etat) + "\n");
-			if (!etat.equal(init.getRes())){		// les boucles allant de init à init sont évitées
+			if (((!etat.equal(init.getRes())) && finale!=init) || finale == init){		// les boucles allant de init à init sont évitées //TODO : à vérifier
 				TabString transition = new TabString(init.getSolution(i));
 				Chemin c = new Chemin(transition, getEtatNb(etat));
 				if (getEtatNb(etat).getRes() == finale.getRes()){
@@ -107,7 +115,7 @@ public class Automate {
 		
 		while(file.size()!=0 && file.get(0).getTailleChemin() <listEtats.size()){	
 			Chemin courant = file.get(0); 	// pour chaque element de la file : courant
-			//System.out.println("courant : " + courant + " nbSol : " + courant.getEtat().getSolutions().size());
+			//System.out.println("courant : " + courant + " nombre d'états dans le chemin : " + courant.getListEtat().size());
 			
 			for (int i=0; i<courant.getEtat().getSolutions().size(); i++){	// on cree un chemin partant de l'etat courant 
 				TabInt etat = new TabInt(courant.getEtat().getVoisin(i));		// etat : voisin de courant
@@ -117,8 +125,10 @@ public class Automate {
 					//System.out.println("pas present");
 					TabString transition = new TabString(courant.getEtat().getSolution(i));	
 					Chemin c = courant.ajoutTransition(transition, getEtatNb(etat));
-					if (solMin.size() == 0 && c.getEtat() == finale)
+					if (solMin.size() == 0 && c.getEtat() == finale){
 						solMin.add(c);
+						System.out.println("sol min trouvé : " + c.getValeurInt());
+					}
 					else {
 
 						boolean comparabilité = false;

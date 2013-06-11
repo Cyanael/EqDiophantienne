@@ -18,10 +18,10 @@ public class TabString {
 	
 
 	
-	public int[] bin2dec(){ //Binaire >> Decimal
-		int[] res = new int[tableau.length];
+	public TabInt bin2dec(){ //Binaire >> Decimal
+		TabInt res = new TabInt(tableau.length);
 		for (int i = 0; i<tableau.length; i++){
-			res[i] =Integer.parseInt(tableau[i], 2);
+			res.setRes(i, Integer.parseInt(tableau[i], 2));
 		}         
 		return res;
 	}

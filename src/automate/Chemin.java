@@ -8,7 +8,7 @@ import outils.TabString;
 public class Chemin{
 
 	//private Valeur chemin; // chemin effectué
-	private int[] valeurInt;
+	private TabInt valeurInt;
 	private int tailleChemin;
 	private Equation etat ; 		// etat sur lequel on se trouve
 	private ArrayList<TabInt> listEtat;	// liste des etats par lesquel on est passé
@@ -33,7 +33,7 @@ public class Chemin{
 		listEtat.add(nouvelEtat.getRes());
 	}
 	
-	public Chemin(int[]t, int taille, Equation nouvelEtat, ArrayList<TabInt> list){  
+	public Chemin(TabInt t, int taille, Equation nouvelEtat, ArrayList<TabInt> list){  
 		//this.chemin = t;
 		this.valeurInt = t;
 		this.tailleChemin = taille;
@@ -47,7 +47,7 @@ public class Chemin{
 
 	public Chemin ajoutTransition(TabString t, Equation nouvelEtat){  // concaténation des chemin pour tester les transitions
 
-		int[] res = new int[t.size()];
+		TabInt res = new TabInt(t.size());
 		//System.out.println("ajoutTransition : " + this.chemin + " et " + t);
 		res = concatDebut(t);
 		Chemin c = new Chemin(res, this.getTailleChemin()+1, nouvelEtat, listEtat);
@@ -56,11 +56,11 @@ public class Chemin{
 		return c;
 	}
 	
-	public int[] concatDebut(TabString str){
+	public TabInt concatDebut(TabString str){
 		int tailleStr = str.size();
-		int[] res = new int[tailleStr];
+		TabInt res = new TabInt(tailleStr);
 		for (int i=0; i<tailleStr; i++){
-			res[i] = (int) (Math.pow(2, tailleChemin)*Integer.valueOf(str.getTab(i)) + valeurInt[i]);
+			res.setRes(i, (int) (Math.pow(2, tailleChemin)*Integer.valueOf(str.getTab(i)) + valeurInt.getRes(i)));
 		}
 		return res;
 	}
@@ -69,7 +69,7 @@ public class Chemin{
 		int tailleStr = str.size();
 		int[] res = new int[tailleStr];	
 		for (int i=0; i<tailleStr; i++){
-			res[i] = this.valeurInt[i]*2 + Integer.valueOf(str.getTab(i));
+			res[i] = this.valeurInt.getRes(i)*2 + Integer.valueOf(str.getTab(i));
 		}
 		return res;
 	}
@@ -77,7 +77,7 @@ public class Chemin{
 	public boolean estPlusPetit (Chemin chem2){ // return vrai si trans1 est plus petit que trans2
 		if (this.estNull())
 			return false;
-		for (int i=0; i<valeurInt.length; i++){
+		for (int i=0; i<valeurInt.size(); i++){
 			if (getValeurInt(i)> chem2.getValeurInt(i))
 				return false;		
 		}
@@ -104,8 +104,8 @@ public class Chemin{
 	}
 
 	public boolean estNull(){
-		for (int i=0; i<valeurInt.length; i++)
-			if (valeurInt[i] != 0)
+		for (int i=0; i<valeurInt.size(); i++)
+			if (valeurInt.getRes(i) != 0)
 				return false;
 		return true;
 	}
@@ -121,16 +121,16 @@ public class Chemin{
 		return bin2dec();
 	}*/
 
-	public int[] getValeurInt(){
+	public TabInt getValeurInt(){
 		return valeurInt;
 	}
 	
 	public int getValeurInt(int indice){
-		return valeurInt[indice];
+		return valeurInt.getRes(indice);
 	}
 	
 	public void setValeurInt(int[] val){
-		this.valeurInt = val;
+		this.valeurInt.setRes(val);
 	}
 	
 	public int getTailleChemin(){
@@ -154,10 +154,6 @@ public class Chemin{
 	}
 
 	public String toString(){
-		String str = "(";
-		for (int i=0; i<valeurInt.length-1; i++)
-			str +=valeurInt[i] + " ";
-		str += valeurInt[valeurInt.length-1] + ")";
-		return str;
+		return "(" + valeurInt + ")";
 	}
 }
