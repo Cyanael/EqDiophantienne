@@ -6,9 +6,11 @@ import matriceEtArbre.MatriceCalcul;
 
 import outils.Print;
 import outils.TabInt;
+import sousEspaces.RecherchePlan;
 
 import algo2.Cellule;
 import algo2.Dag;
+import algo2.SolMin;
 import automate.Automate;
 import automate.Chemin;
 import automate.EqInit;
@@ -86,13 +88,17 @@ public class Main {
 			 */
 			//******** Recherche des Solutions Minimales ********
 			// /!\ Solutions trop longues à écrire à partir de 15 etats
+			if (!auto.getInit().getRes().estNull()){
 			ArrayList<Chemin> ar = new ArrayList<Chemin>();
 			ar = auto.solutionsMinimalesInit();		
-			System.out.println("solMin init : " + Print.arrayChemin(ar));
-			//ArrayList<Chemin> ar2 = new ArrayList<Chemin>();
-			//ar2 = auto.solutionsMinimalesFinales();		
-			// System.out.println("solMin eq homogènes : " + Print.arrayChemin(ar2));
-
+			System.out.println("solMin init : " + ar.size() +" solutions : "+ Print.arrayChemin(ar));
+			}
+			
+			ArrayList<Chemin> ar2 = new ArrayList<Chemin>();
+			ar2 = auto.solutionsMinimalesFinales();		
+			System.out.println("solMin eq homogènes : " + ar2.size() +" solutions : "+ Print.arrayChemin(ar2));
+			
+				
 			long endTime = System.currentTimeMillis();
 			System.out.println("temps d'execution : " + (endTime-startTime));
 		}
@@ -101,24 +107,31 @@ public class Main {
 			//******** Creation de l'arbre ********
 			Dag dag = new Dag(var, res);
 			//ArrayList<Cellule> solMinGlouton = dag.solMinGlouton();
-			//System.out.println("solMin : " +solMinGlouton.size() + " solutions : "+ solMinGlouton);
+			//System.out.println("solMinGlouton : " +solMinGlouton.size() + " solutions : "+ solMinGlouton);
 
 			long endTime1 = System.currentTimeMillis();
 			//System.out.println("temps d'execution glouton: " + (endTime1-startTime));
 
+			//Cellule c = dag.premiereSolMin();
+			//System.out.println(c);
+			
 			ArrayList<Cellule> solMinOrdre = dag.solMinOrdre();
-			System.out.println("solMin 2 : " + solMinOrdre.size() +" solutions : "+ solMinOrdre);
+			System.out.println("solMinOrdre : " + solMinOrdre.size() +" solutions : "+ solMinOrdre);
 			
 			long endTime2 = System.currentTimeMillis();
 			System.out.println("temps d'execution ordre: " + (endTime2-endTime1));
 
-			ArrayList<Cellule> solMinPile = dag.solMinPile();
-			System.out.println("solMin pile : " + solMinPile.size() + " solutions : "+ solMinPile);
+			//ArrayList<Cellule> solMinPile = dag.solMinPile();
+			//System.out.println("solMinPile : " + solMinPile.size() + " solutions : "+ solMinPile);
 
-			long endTime3 = System.currentTimeMillis();
-			System.out.println("temps d'execution pile: " + (endTime3-endTime2));
+			//long endTime3 = System.currentTimeMillis();
+			//System.out.println("temps d'execution pile: " + (endTime3-endTime2));
 
-
+			
+			RecherchePlan rp = new RecherchePlan(var, res);
+			SolMin s = rp.recherche();
+			System.out.println(s);
+			
 		}
 
 	}

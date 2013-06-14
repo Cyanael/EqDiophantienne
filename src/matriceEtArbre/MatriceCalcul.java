@@ -111,7 +111,10 @@ public class MatriceCalcul {
 		MatriceCalcul mc = new MatriceCalcul(auto);
 		mc.initialisation();
 		MatriceCalcul res =  mc.calculExposant(taille);
-		return res.getMat()[0][1];
+		if (auto.getInit().getRes().estNull())
+			return res.getMat()[0][0];
+		else
+			return res.getMat()[0][1];
 	}
 	
 

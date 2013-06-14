@@ -1,11 +1,7 @@
 package algo2;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-
-import automate.Chemin;
 
 import outils.TabInt;
 
@@ -34,10 +30,10 @@ public class Dag {
 		int nbVariable = facteurs[0].length;
 		ArrayList<Cellule> solMin = new ArrayList<Cellule>();
 		ArrayList<Cellule> file = new ArrayList<Cellule>();
-		for (int i=0; i<nbVariable; i++){
+		for (int i=0; i<nbVariable; i++){		// ajout des vecteurs simples dans la file
 			Cellule c = listVecteurs.get(i);
 			file.add(c);
-			if (c.estNulle())
+			if (c.resultatNull())
 				solMin.add(c);
 		}
 		//System.out.println("solMinG, visitées : " + visitée);
@@ -52,10 +48,10 @@ public class Dag {
 				//System.out.println("cellule : " + res + " parent : " + c);
 				if (res.estValide(c)){
 					Cellule fille = c.ajoutVecteurGlouton(res, facteurs, resultats);
-					if (fille.estNulle()){
+					if (fille.resultatNull()){
 						if (!fille.estPresentSol(solMin)){
 							solMin.add(fille);
-							System.out.println("SOL MIN : " + fille.getValeur());
+							//System.out.println("SOL MIN : " + fille.getValeur());
 						}
 					}
 					else {
@@ -86,7 +82,7 @@ public class Dag {
 	}
 
 	public ArrayList<Cellule> solMinOrdre(){
-		long startTime = System.currentTimeMillis();
+		//long startTime = System.currentTimeMillis();
 
 		int nbVariable = facteurs[0].length;
 		ArrayList<Cellule> solMin = new ArrayList<Cellule>();
@@ -97,13 +93,14 @@ public class Dag {
 				freeze[j] = true;
 			Cellule c = new Cellule(listVecteurs.get(i), freeze);
 			file.add(c);
-			if (c.estNulle())
+			if (c.resultatNull())
 				solMin.add(c);
 		}
 		//System.out.println("file début : " + file);
 
 		while(!file.isEmpty()){
 			Cellule c = file.get(0);
+			file.remove(0);
 			Cellule res;
 			boolean[] freeze = c.getFreeze();
 			//System.out.println("cellule courante : " + c);
@@ -115,13 +112,8 @@ public class Dag {
 						Cellule fille = c.ajoutVecteurFreeze(res, facteurs, resultats, freeze);
 						freeze[i] = true;
 						//System.out.println("ajouté : " + fille);
-						if (fille.estNulle()){
+						if (fille.resultatNull()){
 							if (!fille.estPresentSol(solMin)){
-
-								if (solMin.size()==0){
-									long endTime = System.currentTimeMillis();
-									System.out.println("premier solution, temps : " + (endTime-startTime));
-								}
 								solMin.add(fille);
 							}
 						}
@@ -149,14 +141,12 @@ public class Dag {
 					}
 				}
 			}
-			file.remove(0);
+			
 		}
 		return solMin;	
 	}
 
 	public ArrayList<Cellule> solMinPile(){
-		long startTime = System.currentTimeMillis();
-
 		int nbVal = facteurs[0].length;
 		ArrayList<Cellule> solMin = new ArrayList<Cellule>();
 		ArrayList<Cellule> pile = triTailleVecteur();
@@ -172,29 +162,29 @@ public class Dag {
 			pile.remove(0);			// suppression haut de pile
 			//System.out.println("cellule courante : " + courant);
 
-			if (courant.getVecteur().estNull() && !courant.getValeur().estNull()){
-				if (solMin.size() == 0){
-					long endTime = System.currentTimeMillis();
-					System.out.println("premier solution, temps : " + (endTime-startTime));
-				}
+			if (courant.getVecteur().estNull() /*&& !courant.getValeur().estNull()*/){
 				solMin.add(courant);
-				//System.out.println("SOL MIN");
+				//System.out.println("SOL MIN: " + courant);
 			}
 
 			else {
-				boolean[] boolCourant = courant.getFreeze();
-				Cellule fille;
+				boolean[] boolCourant = new boolean[courant.getFreeze().length]; // TODO: vois si on peut remplacer par =courant.getFreeze();
+				for (int t=0; t<boolCourant.length; t++)
+					boolCourant[t] = courant.getFreeze(t);
+				
+				
 				for (int i = 0; i<nbVal; i++){
 					Cellule vect = listVecteurs.get(i);
 					//System.out.println(" vecteur " + i + " : " + vect);
 					//System.out.println("validité : " + (vect.estValide(courant)) + " " +  (boolCourant[i]==false));
-					if (boolCourant[i] == false && vect.estValide(courant) ){ // on ne met pas le ( || !courant.estNull())
-						fille = courant.ajoutVecteurFreeze(vect, facteurs, resultats, boolCourant); // car tous les vecteurs sont != Zero
+					if (boolCourant[i] == false && vect.estValide(courant) ){ 
+						Cellule fille = courant.ajoutVecteurFreeze(vect, facteurs, resultats, boolCourant); 
 						//System.out.println("cellule fille : " + fille);
 
 						boolean ajout = true;
 						Cellule min = null;
-						if (!solMin.isEmpty()){
+						//System.out.println("solMin vide ? " + solMin.isEmpty());
+						if (!solMin.isEmpty()){	// on regarde si on peut comparer avec les sol déjà connues
 							for (int j=0; j<solMin.size(); j++){
 								min = solMin.get(j);
 								//System.out.println("min choisi : " + min + " à ajouter : " + fille);
@@ -203,10 +193,9 @@ public class Dag {
 									//System.out.println("plus grand");
 								}
 							}
-						}	
-
+						}
+						
 						if (ajout){
-							//if (!fille.estPresentListe(visites)){
 							pile.add(0, fille);
 							boolCourant[i] = true;
 							//System.out.println("ajout cellule fille " + fille);
@@ -218,6 +207,8 @@ public class Dag {
 		}
 		return solMin;
 	}
+
+
 
 	public ArrayList<Cellule> triTailleVecteur(){
 		int nbVal = facteurs[0].length;
@@ -241,8 +232,5 @@ public class Dag {
 		}
 		return pile;
 	}
-
-
-
 
 }

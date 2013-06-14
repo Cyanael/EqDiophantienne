@@ -52,11 +52,12 @@ public class Tree {
 			int etage = feuille.getEtage();
 			for (int k=0; k<listFeuille.size(); k++){
 				//System.out.println("valeur en cours : " + listFeuille.get(k));
-				if (pair[etage].contains(listFeuille.get(k)))
+				//System.out.println("etage : " + etage);
+				if (pair[etage-1].contains(listFeuille.get(k)))
 					feuillePair.add(listFeuille.get(k));
 			}
 			for (int k=0; k<listFeuille.size(); k++){
-				if (impair[etage].contains(listFeuille.get(k)))
+				if (impair[etage-1].contains(listFeuille.get(k)))
 					feuilleImpair.add(listFeuille.get(k));
 			}
 			feuille.nouvelEtage(feuillePair, feuilleImpair);		

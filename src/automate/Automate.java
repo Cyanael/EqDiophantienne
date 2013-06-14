@@ -12,27 +12,26 @@ public class Automate {
 	private Equation finale;
 	private ArrayList<Equation> listEtats;	// contient les états initial et finaux
 	private Tree arbreListes;
-	
-	
+
+
 	public Automate(int[][] facteurs, EqInit a){
 		this.facteurs = facteurs;
 		this.init = a;
-		if (a.getRes().estNull())
-			this.finale = a;
-		else
-			this.finale = null;
+		this.finale = null;
 		this.listEtats = new ArrayList<Equation>();
 		this.arbreListes = new Tree();
 		arbreListes = arbreListes.initialisation(a.getTransitionsPaires(), a.getTransitionsImpaires());	
-		}
+	}
 
 	public void initialisation(){
 		int nb;			// numero de l'état, init = 0, final = 1
 		listEtats.add(init);
-		nb = creation(init,2);	// TODO numéro de l'état faux
-		//System.out.println("nb : " + nb);
+		if (init.getRes().estNull())
+			nb = creation(init, 1);
+		else
+			nb = creation(init,2);	// numéro du prochain état : 2
 
-		int indice = 1;
+		int indice = 1;		// on a déjà créé init donc on commence à l'indice 1
 		while(indice < listEtats.size()){	// creation des voisins de chaque etat de la liste
 			nb = creation(listEtats.get(indice), nb);
 			indice++;
@@ -42,7 +41,7 @@ public class Automate {
 			System.out.println("Aucun état final n'a été trouvé");
 			System.exit(0);
 		}
-		
+
 	}
 
 	public int creation(Equation eq, int indice){
@@ -54,10 +53,14 @@ public class Automate {
 			double[] r = listSol.get(i).getEval();
 			TabInt res = new TabInt(facteurs.length);
 			for (int j=0; j<res.size(); j++)
-			res.setRes(j, (int) r[j]);
+				res.setRes(j, (int) r[j]);
 			//System.out.println("etat voisin : " + res);
-			if (!etatPresent(res)){	// si l'état est déjà présent on ne le créé pas
-				EqEtat e;	// ne sera jamais l'état initial
+
+			if (res.estNull() && finale == null && init.getRes().estNull())
+				finale = init;
+
+			else if (!etatPresent(res)){	// si l'état est déjà présent on ne le créé pas
+				EqEtat e = null;	// ne sera jamais l'état initial
 				if (res.estNull()){
 					//System.out.println("création état final");
 					e = new EqEtat(res, facteurs, 1);
@@ -69,11 +72,10 @@ public class Automate {
 					indice1++;
 				}
 				e.initSol(arbreListes.recherche(e.getRes()));
-				
+
 				listEtats.add(e);
 				//System.out.println("apres ajout : " + listEtats + " taille list : " + listEtats.size());
 			}
-
 		}
 		return indice1;
 	}
@@ -101,7 +103,7 @@ public class Automate {
 		for (int i=0; i<init.getSolutions().size(); i++){	// premiers elements dans la file : chemins partants de init
 			TabInt etat = new TabInt(init.getVoisin(i));
 			//System.out.println("etat courant : " + etat + " numero " + getEtatNb(etat) + "\n");
-			if (((!etat.equal(init.getRes())) && finale!=init) || finale == init){		// les boucles allant de init à init sont évitées //TODO : à vérifier
+			if (!etat.equal(init.getRes())){		// les boucles allant de init à init sont évitées //TODO : à vérifier
 				TabString transition = new TabString(init.getSolution(i));
 				Chemin c = new Chemin(transition, getEtatNb(etat));
 				if (getEtatNb(etat).getRes() == finale.getRes()){
@@ -112,10 +114,11 @@ public class Automate {
 					file.add(c);		// ajout des chemin init => !finale
 			}
 		}
-		
+
 		while(file.size()!=0 && file.get(0).getTailleChemin() <listEtats.size()){	
 			Chemin courant = file.get(0); 	// pour chaque element de la file : courant
 			//System.out.println("courant : " + courant + " nombre d'états dans le chemin : " + courant.getListEtat().size());
+			file.remove(0); 
 			
 			for (int i=0; i<courant.getEtat().getSolutions().size(); i++){	// on cree un chemin partant de l'etat courant 
 				TabInt etat = new TabInt(courant.getEtat().getVoisin(i));		// etat : voisin de courant
@@ -153,7 +156,6 @@ public class Automate {
 					}
 				}
 			}
-			file.remove(0); // on l'efface
 		}
 		return solMin;
 	}
@@ -171,14 +173,18 @@ public class Automate {
 			if (getEtatNb(etat).getRes() == finale.getRes()) {
 				if (!c.estNull())
 					solMin.add(c);		// ajouts des chemins finale => finale
-			}
-			else
+			} else
 				file.add(c);		// ajout des chemin finale => !finale
 		}
-		
+		//System.out.println("solMin init : " + solMin);
+		//System.out.println("file : " + file);
+
 		while(file.size()!=0 && file.get(0).getTailleChemin() <listEtats.size()){	
 			Chemin courant = file.get(0); 	// pour chaque element de la file
-
+			file.remove(0);
+			//System.out.println(" nombre d'états dans le chemin : " + courant.getListEtat().size());
+			//System.out.println(file.size());
+			
 			for (int i=0; i<courant.getEtat().getSolutions().size(); i++){// on cree un chemin partant de l'etat courant 
 				TabInt etat = new TabInt(courant.getEtat().getVoisin(i));
 				if (!courant.etatPresentListe(etat)){	// pour éviter les boucles
@@ -196,10 +202,8 @@ public class Automate {
 									if (getEtatNb(etat).getRes() == finale.getRes()){
 										solMin.remove(j);			// alors on la remplace
 										solMin.add(c);
-									}
-									else
+									} else
 										file.add(c);
-
 								}
 							}
 						}
@@ -208,18 +212,17 @@ public class Automate {
 								solMin.add(c);
 							else
 								file.add(c);
-
 						}
 					}
 				}
 			}
-			file.remove(0); // on l'efface
+		 // on l'efface
 		}
 		return solMin;
 	}
 
-	
-	
+
+
 	public int[][] getFacteurs(){
 		return this.facteurs;
 	}
@@ -243,11 +246,11 @@ public class Automate {
 	public ArrayList<Equation> getListEtats(){
 		return listEtats;
 	}
-		//equation a la place indice dans la lsite des etats
+	//equation a la place indice dans la lsite des etats
 	public Equation getEtat(int indice){
 		return this.listEtats.get(indice);
 	}
-		// equation dont le resultat est indice
+	// equation dont le resultat est indice
 	public Equation getEtatNb(TabInt indice){	//TODO : enlever Syso
 		//System.out.println("entre getEtatNb, indice : " + indice);
 		//System.out.println("listEtat : " + listEtats);
@@ -282,5 +285,5 @@ public class Automate {
 	public Tree getArbre(){
 		return this.arbreListes;
 	}
-	
+
 }
