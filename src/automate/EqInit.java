@@ -16,11 +16,11 @@ public class EqInit extends Equation{
 		this.numeroEq = 0;
 	}
 
-	public void initSol(){	// parcours en profondeur pour tester toutes les solutions
+	public void initSol(){	// parcours en profondeur pour mettre chaque solution dans la bonne liste
 		int nbVar = facteurs[0].length;
 		int nbEq = this.resultat.size();
 		ArrayList<Solution> listSol = new ArrayList<Solution>();
-		ArrayList<TabString>[] transitionsPaires = new ArrayList[nbEq];
+		ArrayList<TabString>[] transitionsPaires = new ArrayList[nbEq]; // parite du résultat de l'équation 
 		ArrayList<TabString>[] transitionsImpaires = new ArrayList[nbEq];
 		for (int l=0; l<nbEq; l++){
 			transitionsPaires[l] = new ArrayList<TabString>();
@@ -28,28 +28,35 @@ public class EqInit extends Equation{
 		}
 		TabString solution = new TabString(nbVar);
 		for (int i =0; i<nbVar; i++)
-			solution.setTab(i,  "0");
+			solution.setTab(i,  "0");			// solution  : [0,0,0...0]
 
 		Solution s = new Solution(solution, this.resultat, this.facteurs);
 		double[] res = s.getEval();
-		TabString trans = new TabString(nbVar);
+		TabString trans = new TabString(nbVar);	// copie de solution : [0,0,...0]
 		for (int i = 0; i<nbVar; i++)
 			trans.setTab(i, solution.getTab(i));
+		boolean estSol0 = true;
 		for (int k=0; k<nbEq; k++){
 			//System.out.println("res : " + res[k]);
-			if(res[k] == (int)res[k]){
+			if(res[k] == (int)res[k]){		// si c'est une transition valide
 				if (resultat.getRes(k)%2 == 0)
 					transitionsPaires[k].add(trans);
 				else
 					transitionsImpaires[k].add(trans);
 			}
 			else{
+				estSol0 = false;
 				if (resultat.getRes(k)%2 == 0)
 					transitionsImpaires[k].add(trans);
 				else
 					transitionsPaires[k].add(trans);
 			}
 		}
+		if (estSol0){
+			Solution sOk = new Solution(trans, res);
+			listSol.add(sOk);
+		}
+		
 		boolean boucle = true;
 		while(boucle){
 			int indice = 0;
@@ -84,7 +91,7 @@ public class EqInit extends Equation{
 							transitionsPaires[m].add(trans1);
 					}
 				}
-				if (estSol == true){
+				if (estSol){
 					Solution sOk = new Solution(trans1, res);
 					listSol.add(sOk);
 				}
@@ -97,7 +104,9 @@ public class EqInit extends Equation{
 		this.listTransitionsPaires = transitionsPaires;
 		this.listTransitionsImpaires = transitionsImpaires;		
 		System.out.println("init, liste des transitions possibles : " + listSol);
-	}
+		//System.out.println("init : liste des pas transition : " + transitionsImpaires[0]);
+		//System.out.println("init : liste des transition : " + transitionsPaires[0]);
+		}
 
 
 	

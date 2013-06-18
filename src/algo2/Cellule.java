@@ -2,6 +2,7 @@ package algo2;
 
 import java.util.ArrayList;
 import outils.TabInt;
+import sousEspaces.Vecteur;
 
 public class Cellule implements Comparable{
 
@@ -39,16 +40,6 @@ public class Cellule implements Comparable{
 		this.vecteur = calculVecteur(vecteurHomog, resultatEq);
 		this.tailleVecteur = calculTaille();
 		this.tailleVecteurHomog = calculTailleHomog();
-	}
-
-	public Cellule(Cellule c, boolean[] freeze){
-		this.resultatEq = c.getResEq();
-		this.valeur = c.getValeur();
-		this.vecteur = c.getVecteur();
-		this.vecteurHomog = c.getVecteurHomog();
-		this.freeze = freeze;
-		this.tailleVecteur = c.getTaille();
-		this.tailleVecteurHomog = c.getTailleHomog();
 	}
 	
 	public TabInt calculVecteurHomog(int[][] facteurs, TabInt resultat){
@@ -89,36 +80,36 @@ public class Cellule implements Comparable{
 		return Math.sqrt(taille);
 	}
 	
-	public Cellule ajoutVecteurGlouton(Cellule vecteur, int[][] facteurs, TabInt resultatEq){
+	public Cellule ajoutVecteurGlouton(Vecteur v, int[][] facteurs, TabInt resultatEq){
 		int nbVar = this.valeur.size();
 		TabInt valeur = new TabInt(nbVar);
 		for (int i = 0; i<nbVar; i++)
-			valeur.setRes(i, this.valeur.getRes(i)+vecteur.getValeur().getRes(i));
+			valeur.setRes(i, this.valeur.getRes(i)+v.getValeur().getRes(i));
 		Cellule res = new Cellule(facteurs, valeur, resultatEq);
 		return res;
 	}
 
-	public Cellule ajoutVecteurFreeze(Cellule vecteur, int[][] facteurs, TabInt resultatEq, boolean[] freeze){
+	public Cellule ajoutVecteurFreeze(Vecteur v, int[][] facteurs, TabInt resultatEq, boolean[] freeze){
 		int nbVar = this.valeur.size();
 		TabInt valeur = new TabInt(nbVar);
 		for (int i = 0; i<nbVar; i++)
-			valeur.setRes(i, this.valeur.getRes(i)+vecteur.getValeur().getRes(i));
+			valeur.setRes(i, this.valeur.getRes(i)+v.getValeur().getRes(i));
 		Cellule res = new Cellule(facteurs, valeur, resultatEq, freeze);
 		return res;
 	}
 
-	public boolean estValideHomog(Cellule c){
+	public boolean estValideHomog(Vecteur v){
 		//System.out.println("cos entre : " + this.vecteurHomog + " " + c.getVecteurHomog());
-		double res = tailleVecteurHomog * c.getTailleHomog();
+		double res = tailleVecteurHomog * v.getTaille();
 		double a =0;
 		double b = 0;
 		double d = 0;
 		for (int i = 0; i< vecteurHomog.size(); i++){
-			a += vecteurHomog.getRes(i)*c.getVecteurHomog().getRes(i);			//a = XaYa + XbYb + XcYc
+			a += vecteurHomog.getRes(i)*v.getVecteur().getRes(i);			//a = XaYa + XbYb + XcYc
 			//System.out.println("a : " + a);
 			b += vecteurHomog.getRes(i) * vecteurHomog.getRes(i);					//b = Xa²+Ya²+Za²
 			//System.out.println("b : " + b);
-			d +=c.getVecteurHomog().getRes(i) * c.getVecteurHomog().getRes(i);	//d = Xb²+Yb²+Zb²
+			d +=v.getVecteur().getRes(i) * v.getVecteur().getRes(i);	//d = Xb²+Yb²+Zb²
 			//System.out.println("d : " + d);
 			
 		}
@@ -133,15 +124,15 @@ public class Cellule implements Comparable{
 		return false;
 	}
 	
-	public boolean estValide(Cellule c){	
-		double res = tailleVecteur * c.getTaille();
+	public boolean estValide(Vecteur v){	
+		double res = tailleVecteur * v.getTaille();
 		double a =0;
 		double b = 0;
 		double d = 0;
 		for (int i = 0; i< vecteur.size(); i++){
-			a += vecteur.getRes(i)*c.getVecteur().getRes(i);			//a = XaYa + XbYb + XcYc
+			a += vecteur.getRes(i)*v.getVecteur().getRes(i);			//a = XaYa + XbYb + XcYc
 			b += vecteur.getRes(i) * vecteur.getRes(i);					//b = Xa²+Ya²+Za²
-			d +=c.getVecteur().getRes(i) * c.getVecteur().getRes(i);	//d = Xb²+Yb²+Zb²
+			d +=v.getVecteur().getRes(i) * v.getVecteur().getRes(i);	//d = Xb²+Yb²+Zb²
 		}
 		double cos = a / Math.sqrt(b * d);
 		res = res * cos;
@@ -208,7 +199,7 @@ public class Cellule implements Comparable{
 		return egal;
 	}
 
-	public boolean estPlusPetit (Cellule c){ // return vrai si this est plus petit que c
+	public boolean estPlusPetit (Cellule c){ // return true si this est plus petit ou égal que c
 		if (this.resultatNull())
 			return false;
 		for (int i=0; i<valeur.size(); i++){
@@ -219,8 +210,18 @@ public class Cellule implements Comparable{
 		return true;
 	}
 	
+	public boolean estPlusPetit(ArrayList<Cellule> ar){
+		if (ar.size() == 0)
+			return false;
+		for (int i=0; i<ar.size(); i++){
+			//System.out.println("comparaison " + this.valeur + ar.get(i).getValeur() );
+			if (estPlusPetit(ar.get(i)))
+				return true;
+		}
+		return false;
+	}
+	
 	public boolean estPlusGrand (Cellule c){
-		
 		if (this.getValeur().estNull())
 				return false;
 		for (int i=0; i<valeur.size(); i++){
@@ -232,6 +233,8 @@ public class Cellule implements Comparable{
 	}
 	
 	public boolean estPlusGrand(ArrayList<Cellule> ar){
+		if (ar.size() == 0)
+			return false;
 		for (int i=0; i<ar.size(); i++){
 			//System.out.println("comparaison " + this.valeur + ar.get(i).getValeur() );
 			if (estPlusGrand(ar.get(i)))

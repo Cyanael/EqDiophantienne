@@ -70,14 +70,6 @@ public class Print {
 		return res;
 	}
 	
-	public static String arrayChemin(ArrayList<Chemin> ar){
-		String res = "";
-		for (int i=0; i<ar.size(); i++)
-			//res += "(" + Print.intTab(ar.get(i).getTransitionInt()) + ") ";
-			
-			res += "(" + ar.get(i) + ") "/*: " + ar.get(i).getEtat() + " etats presents : " + ar.get(i).getListEtat() +"\n"*/;
-		return res;
-	}
 	
 	
 }

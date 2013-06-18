@@ -32,7 +32,7 @@ public class Main {
 
 	public static void main (String args[]) throws IOException{
 
-		if (!args[0].equals("automate") && !args[0].equals("vecteur")){
+		if (!args[0].equals("automate") && !args[0].equals("vecteur") && !args[0].equals("espace")){
 			System.out.println("Le premier element d'entre doit etre l'algorithme que vous voulez utiliser : \"automate\" ou \"vecteur\"");
 			return;
 		}
@@ -78,46 +78,48 @@ public class Main {
 			System.out.println("automate : " + Print.automate(auto));
 
 			//******** Creation Matrice ********
+			// /!\ Solution trop longue à écrire à partir de 15 etats
 			/*	MatriceCalcul mc = new MatriceCalcul(auto);
 			mc.initialisation();
 			System.out.println(Print.matrice(mc));
 			mc = mc.routine(2);
 			System.out.println(Print.matrice(mc));
 			//AbExpr abExpr = mc.exprReguliere();
-			//System.out.println("expression regulière  : \n" + abExpr);
-			 */
+			//System.out.println("expression regulière  : \n" + abExpr);*/
+
 			//******** Recherche des Solutions Minimales ********
-			// /!\ Solutions trop longues à écrire à partir de 15 etats
+			
 			if (!auto.getInit().getRes().estNull()){
-			ArrayList<Chemin> ar = new ArrayList<Chemin>();
-			ar = auto.solutionsMinimalesInit();		
-			System.out.println("solMin init : " + ar.size() +" solutions : "+ Print.arrayChemin(ar));
+				ArrayList<Chemin> ar = new ArrayList<Chemin>();
+				ar = auto.solutionsMinimalesInit();		
+				System.out.println("solMin init : " + ar.size() +" solutions : "+ ar);
+				long endTime = System.currentTimeMillis();
+				
+				System.out.println("temps d'execution solMinInit: " + (endTime-startTime));
+				startTime = System.currentTimeMillis();
+
 			}
 			
 			ArrayList<Chemin> ar2 = new ArrayList<Chemin>();
 			ar2 = auto.solutionsMinimalesFinales();		
-			System.out.println("solMin eq homogènes : " + ar2.size() +" solutions : "+ Print.arrayChemin(ar2));
-			
-				
+			System.out.println("solMin eq homogènes : " + ar2.size() +" solutions : "+ ar2);
+
 			long endTime = System.currentTimeMillis();
-			System.out.println("temps d'execution : " + (endTime-startTime));
+			System.out.println("temps d'execution solMinHomog : " + (endTime-startTime));
 		}
-		else {		// algo des vecteurs
+		else if (args[0].equals("vecteur")){		// algo des vecteurs
 
 			//******** Creation de l'arbre ********
 			Dag dag = new Dag(var, res);
-			//ArrayList<Cellule> solMinGlouton = dag.solMinGlouton();
-			//System.out.println("solMinGlouton : " +solMinGlouton.size() + " solutions : "+ solMinGlouton);
+			//SolMin solMinGlouton = dag.solMinGlouton();
+			//System.out.println("solMinGlouton : " +solMinGlouton.getInit().size() + " et " + solMinGlouton.getHomog().size() + " solutions : "+ solMinGlouton);
 
 			long endTime1 = System.currentTimeMillis();
 			//System.out.println("temps d'execution glouton: " + (endTime1-startTime));
 
-			//Cellule c = dag.premiereSolMin();
-			//System.out.println(c);
-			
-			ArrayList<Cellule> solMinOrdre = dag.solMinOrdre();
-			System.out.println("solMinOrdre : " + solMinOrdre.size() +" solutions : "+ solMinOrdre);
-			
+			SolMin solMinOrdre = dag.solMinOrdre();
+			System.out.println("solMinOrdre : " + solMinOrdre.getInit().size() + " et " + solMinOrdre.getHomog().size() +" solutions : "+ solMinOrdre);
+
 			long endTime2 = System.currentTimeMillis();
 			System.out.println("temps d'execution ordre: " + (endTime2-endTime1));
 
@@ -127,11 +129,19 @@ public class Main {
 			//long endTime3 = System.currentTimeMillis();
 			//System.out.println("temps d'execution pile: " + (endTime3-endTime2));
 
-			
+
+
+		}
+		else{
+			long startTim = System.currentTimeMillis();
+
 			RecherchePlan rp = new RecherchePlan(var, res);
 			SolMin s = rp.recherche();
 			System.out.println(s);
-			
+
+			long endTime = System.currentTimeMillis();
+			System.out.println("temps d'execution : " + (endTime-startTim));
+
 		}
 
 	}

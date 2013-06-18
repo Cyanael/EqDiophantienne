@@ -109,31 +109,30 @@ public class Automate {
 				if (getEtatNb(etat).getRes() == finale.getRes()){
 					if (!c.estNull())	// on ne veut pas les boucles nulles
 						solMin.add(c);	// ajout des chemin init => init
-				}
-				else
+				} else
 					file.add(c);		// ajout des chemin init => !finale
 			}
 		}
+		//System.out.println("file après initialisation : " + file);
 
 		while(file.size()!=0 && file.get(0).getTailleChemin() <listEtats.size()){	
 			Chemin courant = file.get(0); 	// pour chaque element de la file : courant
 			//System.out.println("courant : " + courant + " nombre d'états dans le chemin : " + courant.getListEtat().size());
 			file.remove(0); 
-			
+
 			for (int i=0; i<courant.getEtat().getSolutions().size(); i++){	// on cree un chemin partant de l'etat courant 
 				TabInt etat = new TabInt(courant.getEtat().getVoisin(i));		// etat : voisin de courant
 				//System.out.println(etat + " estPresent " + courant.getListEtat() +" : ");
 				//System.out.println(courant.etatPresentListe(etat));
 				if (etat != init.getRes() && !courant.etatPresentListe(etat)){	// pour éviter les boucles
-					//System.out.println("pas present");
+					//	System.out.println("pas present");
 					TabString transition = new TabString(courant.getEtat().getSolution(i));	
 					Chemin c = courant.ajoutTransition(transition, getEtatNb(etat));
+					//	System.out.println("chemin courant : " + c);
 					if (solMin.size() == 0 && c.getEtat() == finale){
 						solMin.add(c);
-						System.out.println("sol min trouvé : " + c.getValeurInt());
-					}
-					else {
-
+						//System.out.println("sol min trouvé : " + c.getValeurInt());
+					} else {
 						boolean comparabilité = false;
 						for (int j=0; j<solMin.size(); j++){
 							if (c.estComparable(solMin.get(j))){
@@ -163,9 +162,12 @@ public class Automate {
 
 
 	public ArrayList<Chemin> solutionsMinimalesFinales(){		
+		validitéSignes();	//verifie les signes des facteurs
+
 		ArrayList<Chemin> solMin = new ArrayList<Chemin>();
 		ArrayList<Chemin> file = new ArrayList<Chemin>();
 
+		//System.out.println("nb chemin sortants : " + finale.getSolutions().size());
 		for (int i=0; i<finale.getSolutions().size(); i++){	// premiers elements dans la file : chemins partants de finale
 			TabInt etat = new TabInt(finale.getVoisin(i));
 			TabString transition = new TabString(finale.getSolution(i));
@@ -180,13 +182,17 @@ public class Automate {
 		//System.out.println("file : " + file);
 
 		while(file.size()!=0 && file.get(0).getTailleChemin() <listEtats.size()){	
+			//for (int m=0; m<10; m++){
 			Chemin courant = file.get(0); 	// pour chaque element de la file
 			file.remove(0);
+			//System.out.println("états dans la liste : " + courant.getListEtat());
 			//System.out.println(" nombre d'états dans le chemin : " + courant.getListEtat().size());
 			//System.out.println(file.size());
-			
+			//System.out.println("courant : " + courant + " nombre d'états dans le chemin : " + courant.getListEtat().size());
+
 			for (int i=0; i<courant.getEtat().getSolutions().size(); i++){// on cree un chemin partant de l'etat courant 
 				TabInt etat = new TabInt(courant.getEtat().getVoisin(i));
+
 				if (!courant.etatPresentListe(etat)){	// pour éviter les boucles
 					TabString transition = new TabString(courant.getEtat().getSolution(i));
 					Chemin c = courant.ajoutTransition(transition, getEtatNb(etat));
@@ -216,11 +222,29 @@ public class Automate {
 					}
 				}
 			}
-		 // on l'efface
 		}
 		return solMin;
 	}
 
+	
+	public void validitéSignes(){
+		boolean positif = false;	// on commence par vérifier qu'un facteur (au moin) par eq soit positif et un négatif
+		boolean negatif = false;
+		for (int a=0; a<facteurs.length; a++){
+			positif = false;
+			negatif = false;
+			for (int b=0; b<facteurs[0].length; b++){
+				if (facteurs[a][b] > 0 )
+					positif = true;
+				if (facteurs[a][b] < 0)
+					negatif = true;
+			}
+			if (!negatif || !positif){
+				System.out.println("il n'y a pas de solution minimale de l'équation homogène car les facteurs ont la même parité dans au moins une équation.");
+				System.exit(0);
+			}
+		}
+	}
 
 
 	public int[][] getFacteurs(){

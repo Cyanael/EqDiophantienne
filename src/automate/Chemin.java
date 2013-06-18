@@ -1,6 +1,8 @@
 package automate;
 import java.util.ArrayList;
 
+import algo2.Cellule;
+
 import outils.TabInt;
 import outils.TabString;
 
@@ -8,10 +10,10 @@ import outils.TabString;
 public class Chemin{
 
 	//private Valeur chemin; // chemin effectué
-	private TabInt valeurInt;
+	private TabInt valeurInt;	//valeur des variables
 	private int tailleChemin;
 	private Equation etat ; 		// etat sur lequel on se trouve
-	private ArrayList<TabInt> listEtat;	// liste des etats par lesquel on est passé
+	private ArrayList<TabInt> listEtat;	// liste des etats par lesquel on est passé sans compter l'initial
 
 	public Chemin(TabString t, Equation nouvelEtat){
 		//this.chemin = t;
@@ -89,7 +91,7 @@ public class Chemin{
 			return false;
 		return true;
 	}
-
+	
 	public boolean etatPresentListe (TabInt etat){
 		boolean present = false; 
 		int i = 0;
@@ -154,6 +156,6 @@ public class Chemin{
 	}
 
 	public String toString(){
-		return "(" + valeurInt + ")";
+		return valeurInt.toString();
 	}
 }
